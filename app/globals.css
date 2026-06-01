@@ -458,6 +458,15 @@ h3 {
   padding: 18px 0;
 }
 
+.cartItem strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.cartItem span {
+  display: block;
+}
+
 .quantity {
   display: flex;
   align-items: center;
