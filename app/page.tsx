@@ -301,9 +301,23 @@ export default function Home() {
               </div>
               <div className="productActions">
                 <strong>{product.price} ₽</strong>
-                <button onClick={() => addToCart(product.id)} type="button">
-                  {cart[product.id] ? `Добавлено · ${cart[product.id]} шт` : "Добавить"}
-                </button>
+                {cart[product.id] ? (
+                  <div className="productStepper" aria-label={`Количество товара ${product.name}`}>
+                    <button onClick={() => changeQuantity(product.id, -1)} type="button">
+                      -
+                    </button>
+                    <button className="addedButton" onClick={() => addToCart(product.id)} type="button">
+                      Добавлено · {cart[product.id]} шт
+                    </button>
+                    <button onClick={() => changeQuantity(product.id, 1)} type="button">
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => addToCart(product.id)} type="button">
+                    Добавить
+                  </button>
+                )}
               </div>
             </article>
           ))}

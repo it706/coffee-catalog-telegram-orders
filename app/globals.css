@@ -418,6 +418,28 @@ h3 {
   padding: 0 8px 8px;
 }
 
+.productStepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.productStepper button {
+  min-height: 38px;
+}
+
+.productStepper button:first-child,
+.productStepper button:last-child {
+  min-width: 38px;
+  padding: 0;
+}
+
+.productStepper .addedButton {
+  color: var(--surface);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
 .productCard strong {
   font-size: 23px;
 }
@@ -666,9 +688,17 @@ textarea:focus {
     flex-direction: column;
   }
 
+  .productCard > .productActions,
+  .productStepper,
+  .productStepper .addedButton,
   .productCard button,
   .button.full {
     width: 100%;
+  }
+
+  .productStepper {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
   }
 }
 
