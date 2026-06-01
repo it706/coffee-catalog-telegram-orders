@@ -302,7 +302,7 @@ export default function Home() {
               <div className="productActions">
                 <strong>{product.price} ₽</strong>
                 <button onClick={() => addToCart(product.id)} type="button">
-                  {recentlyAddedId === product.id ? "Добавлено" : "Добавить"}
+                  {cart[product.id] ? `Добавлено · ${cart[product.id]} шт` : "Добавить"}
                 </button>
               </div>
             </article>
