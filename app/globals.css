@@ -410,34 +410,44 @@ h3 {
 }
 
 .productActions {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   margin-top: auto;
   padding: 0 8px 8px;
 }
 
+.productActions strong {
+  white-space: nowrap;
+}
+
 .productStepper {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: flex-end;
+  gap: 5px;
+  min-width: 0;
 }
 
 .productStepper button {
-  min-height: 38px;
+  min-height: 34px;
+  font-size: 13px;
 }
 
 .productStepper button:first-child,
 .productStepper button:last-child {
-  min-width: 38px;
+  min-width: 34px;
   padding: 0;
 }
 
 .productStepper .addedButton {
+  min-width: 106px;
+  padding: 0 10px;
   color: var(--surface);
   border-color: var(--accent);
   background: var(--accent);
+  line-height: 1.15;
 }
 
 .productCard strong {
@@ -688,17 +698,19 @@ textarea:focus {
     flex-direction: column;
   }
 
-  .productCard > .productActions,
-  .productStepper,
-  .productStepper .addedButton,
   .productCard button,
   .button.full {
     width: 100%;
   }
 
+  .productActions {
+    grid-template-columns: 1fr;
+  }
+
   .productStepper {
     display: grid;
     grid-template-columns: 44px 1fr 44px;
+    width: 100%;
   }
 }
 
