@@ -117,6 +117,7 @@ export default function Home() {
   const [delivery, setDelivery] = useState("Самовывоз");
   const [comment, setComment] = useState("");
   const [status, setStatus] = useState("");
+  const [recentlyAddedId, setRecentlyAddedId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredProducts = useMemo(() => {
@@ -141,6 +142,8 @@ export default function Home() {
       ...current,
       [productId]: (current[productId] ?? 0) + 1,
     }));
+    setRecentlyAddedId(productId);
+    window.setTimeout(() => setRecentlyAddedId((current) => (current === productId ? null : current)), 1100);
   }
 
   function changeQuantity(productId: number, delta: number) {
@@ -281,7 +284,7 @@ export default function Home() {
 
         <div className="productGrid">
           {filteredProducts.map((product) => (
-            <article className="productCard" key={product.id}>
+            <article className={recentlyAddedId === product.id ? "productCard added" : "productCard"} key={product.id}>
               <div
                 className="productPhoto"
                 style={{
@@ -299,7 +302,7 @@ export default function Home() {
               <div className="productActions">
                 <strong>{product.price} ₽</strong>
                 <button onClick={() => addToCart(product.id)} type="button">
-                  Добавить
+                  {recentlyAddedId === product.id ? "Добавлено" : "Добавить"}
                 </button>
               </div>
             </article>

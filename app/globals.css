@@ -315,6 +315,11 @@ h3 {
   overflow: hidden;
   padding: 12px;
   background: var(--surface);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
 .productCard:nth-child(2),
@@ -325,6 +330,32 @@ h3 {
 .productCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 44px rgba(17, 20, 18, 0.08);
+}
+
+.productCard.added {
+  border-color: rgba(49, 88, 70, 0.38);
+  background: #f1f6ee;
+  animation: addedPulse 700ms ease;
+}
+
+.productCard.added button {
+  color: var(--surface);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+@keyframes addedPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.018);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .productPhoto {
