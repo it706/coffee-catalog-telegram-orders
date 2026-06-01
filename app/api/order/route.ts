@@ -32,6 +32,7 @@ export async function POST(request: Request) {
   const items = payload.items ?? [];
   const total = payload.total ?? 0;
   const phoneDigits = phone.replace(/\D/g, "");
+  const deliveryDetails = delivery === "Самовывоз" ? "Самовывоз, Москва, Лермонтова 51" : delivery;
 
   if (!customerName || phoneDigits.length !== 11 || !delivery || items.length === 0 || total <= 0) {
     return NextResponse.json({ message: "Invalid order data" }, { status: 400 });
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
     "",
     `<b>Клиент:</b> ${escapeHtml(customerName)}`,
     `<b>Телефон:</b> ${escapeHtml(phone)}`,
-    `<b>Получение:</b> ${escapeHtml(delivery)}`,
+    `<b>Получение:</b> ${escapeHtml(deliveryDetails)}`,
     comment ? `<b>Комментарий:</b> ${escapeHtml(comment)}` : "",
     "",
     "<b>Состав заказа:</b>",

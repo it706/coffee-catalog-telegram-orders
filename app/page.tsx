@@ -90,6 +90,7 @@ const products: Product[] = [
 ];
 
 const categories = ["Все", "Зерно", "Дрип-пакеты", "Аксессуары"] as const;
+const pickupAddress = "Москва, Лермонтова 51";
 
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -379,6 +380,7 @@ export default function Home() {
               <option>Доставка по городу</option>
               <option>Доставка СДЭК</option>
             </select>
+            {delivery === "Самовывоз" ? <small className="pickupAddress">Адрес: {pickupAddress}</small> : null}
           </label>
           <label>
             Комментарий
