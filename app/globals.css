@@ -630,11 +630,241 @@ textarea:focus {
   font-weight: 760;
 }
 
+.adminPage {
+  min-height: 100vh;
+  padding: 34px clamp(18px, 5vw, 64px) 70px;
+}
+
+.adminHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.adminHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.adminHeaderActions button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 20px;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+  font-weight: 760;
+}
+
+.adminHeader h1 {
+  max-width: 900px;
+  margin-bottom: 14px;
+  font-size: clamp(38px, 5vw, 70px);
+}
+
+.adminHeader p:not(.eyebrow) {
+  max-width: 660px;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.adminNotice {
+  margin-bottom: 16px;
+  border: 1px solid rgba(185, 143, 85, 0.26);
+  border-radius: 18px;
+  padding: 16px 18px;
+  color: #72542f;
+  background: #f8efe0;
+  line-height: 1.5;
+}
+
+.adminLayout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.adminList,
+.adminEditor {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--surface);
+}
+
+.adminList {
+  position: sticky;
+  top: 92px;
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.adminListHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 10px;
+}
+
+.adminListHead button,
+.adminActions button,
+.adminItem {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+  font-weight: 740;
+}
+
+.adminItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.adminItem span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminItem small {
+  color: var(--muted);
+  font-weight: 740;
+}
+
+.adminItem.active,
+.adminItem:hover,
+.adminListHead button:hover,
+.adminActions button:hover {
+  color: var(--surface);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.adminItem.active small,
+.adminItem:hover small {
+  color: rgba(251, 252, 247, 0.72);
+}
+
+.adminEditor {
+  display: grid;
+  gap: 22px;
+  padding: clamp(20px, 4vw, 34px);
+}
+
+.adminPreview {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 22px;
+  align-items: end;
+  border-radius: 22px;
+  padding: 12px;
+  background: var(--cream);
+}
+
+.adminPreview .productPhoto {
+  min-height: 230px;
+}
+
+.adminPreview h2 {
+  margin-bottom: 12px;
+}
+
+.adminPreview p:not(.eyebrow) {
+  max-width: 540px;
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.adminPreview strong {
+  font-size: 34px;
+}
+
+.adminForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.adminForm .wide {
+  grid-column: 1 / -1;
+}
+
+.adminActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.adminActions .button.primary:hover {
+  color: var(--surface);
+}
+
+.loginPage {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(17, 20, 18, 0.08), transparent 38%),
+    var(--bg);
+}
+
+.loginCard {
+  display: grid;
+  width: min(100%, 460px);
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: clamp(24px, 5vw, 42px);
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(17, 20, 18, 0.1);
+}
+
+.loginCard .brandMark {
+  width: 52px;
+  height: 52px;
+}
+
+.loginCard h1 {
+  margin-bottom: 12px;
+  font-size: clamp(36px, 7vw, 54px);
+}
+
+.loginCard p:not(.eyebrow):not(.status) {
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.loginBack {
+  justify-self: center;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 740;
+}
+
 @media (max-width: 980px) {
   .topbar,
   .hero,
   .catalogHead,
-  .order {
+  .order,
+  .adminHeader,
+  .adminLayout,
+  .adminPreview {
     grid-template-columns: 1fr;
   }
 
@@ -661,6 +891,10 @@ textarea:focus {
 
   nav {
     justify-content: flex-start;
+  }
+
+  .adminList {
+    position: static;
   }
 
   .benefits {
@@ -774,6 +1008,39 @@ textarea:focus {
   .productStepper {
     display: grid;
     grid-template-columns: 44px 1fr 44px;
+    width: 100%;
+  }
+
+  .adminPage {
+    padding: 24px 14px 48px;
+  }
+
+  .adminHeader {
+    align-items: start;
+  }
+
+  .adminHeader .button {
+    width: 100%;
+  }
+
+  .adminHeaderActions,
+  .adminHeaderActions button {
+    width: 100%;
+  }
+
+  .adminForm {
+    grid-template-columns: 1fr;
+  }
+
+  .adminPreview {
+    border-radius: 20px;
+  }
+
+  .adminPreview .productPhoto {
+    min-height: 210px;
+  }
+
+  .adminActions button {
     width: 100%;
   }
 }
