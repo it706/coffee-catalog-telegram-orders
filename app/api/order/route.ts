@@ -16,8 +16,6 @@ type OrderPayload = {
   total?: number;
 };
 
-let orderSequence = 0;
-
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -27,8 +25,27 @@ function escapeHtml(value: string) {
 }
 
 function createOrderNumber() {
-  orderSequence += 1;
-  return `VC-${String(orderSequence).padStart(6, "0")}`;
+  const now = new Date();
+  const date = new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Europe/Moscow",
+  })
+    .format(now)
+    .split(".")
+    .reverse()
+    .join("");
+  const time = new Intl.DateTimeFormat("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone: "Europe/Moscow",
+  })
+    .format(now)
+    .replace(/\D/g, "");
+
+  return `VC-${date}-${time}`;
 }
 
 export async function POST(request: Request) {
