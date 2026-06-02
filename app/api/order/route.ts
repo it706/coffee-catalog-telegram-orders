@@ -16,12 +16,19 @@ type OrderPayload = {
   total?: number;
 };
 
+let orderSequence = 0;
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function createOrderNumber() {
+  orderSequence += 1;
+  return `VC-${String(orderSequence).padStart(6, "0")}`;
 }
 
 export async function POST(request: Request) {
@@ -65,7 +72,7 @@ export async function POST(request: Request) {
     timeStyle: "short",
     timeZone: "Europe/Moscow",
   }).format(new Date());
-  const orderNumber = `VC-${Date.now().toString().slice(-6)}`;
+  const orderNumber = createOrderNumber();
 
   const text = [
     `<b>Новый заказ ${orderNumber} с сайта Valery's Coffee</b>`,
