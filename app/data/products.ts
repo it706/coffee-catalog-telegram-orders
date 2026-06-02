@@ -9,10 +9,18 @@ export type Product = {
   weight: string;
   brew: string;
   imagePosition: string;
+  isPublished: boolean;
 };
 
 export const categories = ["Все", "Зерно", "Дрип-пакеты", "Аксессуары"] as const;
 export const productStorageKey = "valerys-coffee-products";
+
+export function normalizeProducts(products: Product[]) {
+  return products.map((product) => ({
+    ...product,
+    isPublished: product.isPublished ?? true,
+  }));
+}
 
 export const defaultProducts: Product[] = [
   {
@@ -26,6 +34,7 @@ export const defaultProducts: Product[] = [
     weight: "250 г",
     brew: "фильтр / V60",
     imagePosition: "0% 0%",
+    isPublished: true,
   },
   {
     id: 2,
@@ -38,6 +47,7 @@ export const defaultProducts: Product[] = [
     weight: "250 г",
     brew: "эспрессо / турка",
     imagePosition: "33.333% 0%",
+    isPublished: true,
   },
   {
     id: 3,
@@ -50,6 +60,7 @@ export const defaultProducts: Product[] = [
     weight: "250 г",
     brew: "фильтр / эспрессо",
     imagePosition: "66.666% 0%",
+    isPublished: true,
   },
   {
     id: 4,
@@ -62,6 +73,7 @@ export const defaultProducts: Product[] = [
     weight: "6 шт",
     brew: "просто добавить воду",
     imagePosition: "100% 0%",
+    isPublished: true,
   },
   {
     id: 5,
@@ -74,6 +86,7 @@ export const defaultProducts: Product[] = [
     weight: "8 шт",
     brew: "дрип-пакеты",
     imagePosition: "0% 100%",
+    isPublished: true,
   },
   {
     id: 6,
@@ -86,6 +99,7 @@ export const defaultProducts: Product[] = [
     weight: "размер 02",
     brew: "V60",
     imagePosition: "33.333% 100%",
+    isPublished: true,
   },
   {
     id: 7,
@@ -98,6 +112,7 @@ export const defaultProducts: Product[] = [
     weight: "100 шт",
     brew: "V60 02",
     imagePosition: "66.666% 100%",
+    isPublished: true,
   },
   {
     id: 8,
@@ -110,5 +125,6 @@ export const defaultProducts: Product[] = [
     weight: "360 мл",
     brew: "напитки с собой",
     imagePosition: "100% 100%",
+    isPublished: true,
   },
 ];

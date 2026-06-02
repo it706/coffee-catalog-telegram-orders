@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { categories, defaultProducts, productStorageKey, type Product } from "./data/products";
+import { categories, defaultProducts, normalizeProducts, productStorageKey, type Product } from "./data/products";
 
 type Cart = Record<number, number>;
 const pickupAddress = "Москва, Лермонтова 51";
@@ -37,20 +37,22 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [recentlyAddedId, setRecentlyAddedId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const publishedProducts = useMemo(() => products.filter((product) => product.isPublished), [products]);
+  const featuredProduct = publishedProducts.find((product) => product.id === 1) ?? publishedProducts[0];
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "Все") return products;
-    return products.filter((product) => product.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === "Все") return publishedProducts;
+    return publishedProducts.filter((product) => product.category === activeCategory);
+  }, [activeCategory, publishedProducts]);
 
   const cartItems = useMemo(() => {
-    return products
+    return publishedProducts
       .filter((product) => cart[product.id])
       .map((product) => ({
         ...product,
         quantity: cart[product.id],
       }));
-  }, [cart, products]);
+  }, [cart, publishedProducts]);
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -62,7 +64,7 @@ export default function Home() {
 
     if (savedProducts) {
       try {
-        setProducts(JSON.parse(savedProducts) as Product[]);
+        setProducts(normalizeProducts(JSON.parse(savedProducts) as Product[]));
       } catch {
         window.localStorage.removeItem(productStorageKey);
       }
@@ -80,6 +82,15 @@ export default function Home() {
   useEffect(() => {
     window.localStorage.setItem(cartStorageKey, JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    setCart((current) => {
+      const publishedIds = new Set(publishedProducts.map((product) => product.id));
+      const nextCart = Object.fromEntries(Object.entries(current).filter(([productId]) => publishedIds.has(Number(productId)))) as Cart;
+
+      return Object.keys(nextCart).length === Object.keys(current).length ? current : nextCart;
+    });
+  }, [publishedProducts]);
 
   function addToCart(productId: number) {
     setCart((current) => ({
@@ -207,9 +218,9 @@ export default function Home() {
         </div>
         <aside className="heroCard">
           <span>Хит недели</span>
-          <strong>Эфиопия Сидамо</strong>
-          <p>Светлая обжарка с нотами жасмина и абрикоса.</p>
-          <button className="button ghost" onClick={() => addToCart(1)} type="button">
+          <strong>{featuredProduct?.name ?? "Valery's Coffee"}</strong>
+          <p>{featuredProduct?.note ?? "Выберите кофе из актуального каталога."}</p>
+          <button className="button ghost" disabled={!featuredProduct} onClick={() => featuredProduct && addToCart(featuredProduct.id)} type="button">
             В корзину
           </button>
         </aside>

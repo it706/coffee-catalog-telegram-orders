@@ -3,7 +3,7 @@
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { categories, defaultProducts, productStorageKey, type Product } from "../data/products";
+import { categories, defaultProducts, normalizeProducts, productStorageKey, type Product } from "../data/products";
 
 const editableCategories = categories.filter((category) => category !== "Все") as Product["category"][];
 const imagePositions = ["0% 0%", "33.333% 0%", "66.666% 0%", "100% 0%", "0% 100%", "33.333% 100%", "66.666% 100%", "100% 100%"];
@@ -20,6 +20,7 @@ function createProduct(products: Product[]): Product {
     weight: "250 г",
     brew: "способ приготовления",
     imagePosition: "0% 0%",
+    isPublished: true,
   };
 }
 
@@ -41,7 +42,7 @@ export default function AdminPage() {
     try {
       const parsedProducts = JSON.parse(savedProducts) as Product[];
       if (parsedProducts.length > 0) {
-        setProducts(parsedProducts);
+        setProducts(normalizeProducts(parsedProducts));
         setSelectedId(parsedProducts[0].id);
       }
     } catch {
@@ -60,6 +61,10 @@ export default function AdminPage() {
       products.map((product) => (product.id === selectedProduct.id ? { ...product, [field]: value } : product)),
       "Изменение сохранено в браузере.",
     );
+  }
+
+  function togglePublication() {
+    updateSelectedProduct("isPublished", !selectedProduct.isPublished);
   }
 
   function handleTextChange(field: keyof Product) {
@@ -141,7 +146,7 @@ export default function AdminPage() {
               type="button"
             >
               <span>{product.name}</span>
-              <small>{product.price} ₽</small>
+              <small>{product.isPublished ? `${product.price} ₽` : "Скрыт"}</small>
             </button>
           ))}
         </aside>
@@ -166,6 +171,15 @@ export default function AdminPage() {
           </div>
 
           <div className="adminForm">
+            <label className="wide publishControl">
+              <span>
+                Статус товара
+                <small>{selectedProduct.isPublished ? "Товар виден в каталоге и доступен для заказа." : "Товар скрыт с витрины, но сохранен в админке."}</small>
+              </span>
+              <button className={selectedProduct.isPublished ? "publishToggle active" : "publishToggle"} onClick={togglePublication} type="button">
+                {selectedProduct.isPublished ? "Опубликован" : "Скрыт"}
+              </button>
+            </label>
             <label>
               Название
               <input onChange={handleTextChange("name")} value={selectedProduct.name} />
