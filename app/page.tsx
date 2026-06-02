@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Product = {
   id: number;
@@ -9,6 +9,9 @@ type Product = {
   price: number;
   note: string;
   roast: string;
+  origin: string;
+  weight: string;
+  brew: string;
   imagePosition: string;
 };
 
@@ -22,6 +25,9 @@ const products: Product[] = [
     price: 1190,
     note: "Жасмин, абрикос, легкая чайность",
     roast: "светлая обжарка",
+    origin: "Эфиопия",
+    weight: "250 г",
+    brew: "фильтр / V60",
     imagePosition: "0% 0%",
   },
   {
@@ -31,6 +37,9 @@ const products: Product[] = [
     price: 890,
     note: "Шоколад, орех, плотное тело",
     roast: "средняя обжарка",
+    origin: "Бразилия",
+    weight: "250 г",
+    brew: "эспрессо / турка",
     imagePosition: "33.333% 0%",
   },
   {
@@ -40,6 +49,9 @@ const products: Product[] = [
     price: 1090,
     note: "Красное яблоко, карамель, какао",
     roast: "средняя обжарка",
+    origin: "Колумбия",
+    weight: "250 г",
+    brew: "фильтр / эспрессо",
     imagePosition: "66.666% 0%",
   },
   {
@@ -49,6 +61,9 @@ const products: Product[] = [
     price: 790,
     note: "6 порций для поездок и офиса",
     roast: "фильтр",
+    origin: "ассорти",
+    weight: "6 шт",
+    brew: "просто добавить воду",
     imagePosition: "100% 0%",
   },
   {
@@ -58,6 +73,9 @@ const products: Product[] = [
     price: 990,
     note: "Набор из 8 разных вкусов",
     roast: "ассорти",
+    origin: "ассорти",
+    weight: "8 шт",
+    brew: "дрип-пакеты",
     imagePosition: "0% 100%",
   },
   {
@@ -67,6 +85,9 @@ const products: Product[] = [
     price: 1790,
     note: "Керамическая воронка для фильтр-кофе",
     roast: "для дома",
+    origin: "керамика",
+    weight: "размер 02",
+    brew: "V60",
     imagePosition: "33.333% 100%",
   },
   {
@@ -76,6 +97,9 @@ const products: Product[] = [
     price: 590,
     note: "100 бумажных фильтров",
     roast: "расходники",
+    origin: "бумага",
+    weight: "100 шт",
+    brew: "V60 02",
     imagePosition: "66.666% 100%",
   },
   {
@@ -85,12 +109,16 @@ const products: Product[] = [
     price: 2190,
     note: "Стальная кружка 360 мл",
     roast: "to go",
+    origin: "сталь",
+    weight: "360 мл",
+    brew: "напитки с собой",
     imagePosition: "100% 100%",
   },
 ];
 
 const categories = ["Все", "Зерно", "Дрип-пакеты", "Аксессуары"] as const;
 const pickupAddress = "Москва, Лермонтова 51";
+const cartStorageKey = "valerys-coffee-cart";
 
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -116,6 +144,7 @@ export default function Home() {
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [delivery, setDelivery] = useState("Самовывоз");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [comment, setComment] = useState("");
   const [status, setStatus] = useState("");
   const [recentlyAddedId, setRecentlyAddedId] = useState<number | null>(null);
@@ -136,7 +165,24 @@ export default function Home() {
   }, [cart]);
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const phoneDigits = phone.replace(/\D/g, "");
+
+  useEffect(() => {
+    const savedCart = window.localStorage.getItem(cartStorageKey);
+
+    if (!savedCart) return;
+
+    try {
+      setCart(JSON.parse(savedCart) as Cart);
+    } catch {
+      window.localStorage.removeItem(cartStorageKey);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(cartStorageKey, JSON.stringify(cart));
+  }, [cart]);
 
   function addToCart(productId: number) {
     setCart((current) => ({
@@ -181,6 +227,11 @@ export default function Home() {
       return;
     }
 
+    if (delivery !== "Самовывоз" && !deliveryAddress.trim()) {
+      setStatus("Укажите адрес доставки.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -193,6 +244,7 @@ export default function Home() {
           customerName: customerName.trim(),
           phone,
           delivery,
+          deliveryAddress: deliveryAddress.trim(),
           comment,
           total,
           items: cartItems.map((item) => ({
@@ -207,11 +259,14 @@ export default function Home() {
         throw new Error("Order request failed");
       }
 
-      setStatus("Заказ отправлен. Администратор свяжется для подтверждения.");
+      const result = (await response.json()) as { orderNumber?: string };
+
+      setStatus(`Заказ ${result.orderNumber ?? ""} отправлен. Администратор свяжется для подтверждения.`);
       setCart({});
       setCustomerName("");
       setPhone("");
       setDelivery("Самовывоз");
+      setDeliveryAddress("");
       setComment("");
     } catch {
       setStatus("Не удалось отправить заказ. Попробуйте еще раз или напишите нам.");
@@ -234,7 +289,7 @@ export default function Home() {
         </a>
         <nav aria-label="Навигация">
           <a href="#catalog">Каталог</a>
-          <a href="#cart">Заказ</a>
+          <a href="#cart">Заказ{totalQuantity ? ` · ${totalQuantity}` : ""}</a>
         </nav>
         <a className="contact" href="tel:+79990000000">
           +7 999 000-00-00
@@ -261,6 +316,24 @@ export default function Home() {
             В корзину
           </button>
         </aside>
+      </section>
+
+      <section className="benefits" aria-label="Преимущества">
+        <article>
+          <span>01</span>
+          <strong>Свежая обжарка</strong>
+          <p>Подбираем партии для дома, офиса и кофейных зон в жилых комплексах.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <strong>Доставка и самовывоз</strong>
+          <p>Самовывоз в Москве, доставка по городу и отправка СДЭК.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <strong>Помол под задачу</strong>
+          <p>В комментарии можно указать помол под фильтр, турку или эспрессо.</p>
+        </article>
       </section>
 
       <section className="catalog" id="catalog">
@@ -299,6 +372,11 @@ export default function Home() {
                 <h3>{product.name}</h3>
                 <p>{product.note}</p>
                 <small>{product.roast}</small>
+                <ul className="productMeta">
+                  <li>{product.origin}</li>
+                  <li>{product.weight}</li>
+                  <li>{product.brew}</li>
+                </ul>
               </div>
               <div className="productActions">
                 <strong>{product.price} ₽</strong>
@@ -382,6 +460,16 @@ export default function Home() {
             </select>
             {delivery === "Самовывоз" ? <small className="pickupAddress">Адрес: {pickupAddress}</small> : null}
           </label>
+          {delivery !== "Самовывоз" ? (
+            <label>
+              Адрес доставки
+              <input
+                onChange={(event) => setDeliveryAddress(event.target.value)}
+                placeholder={delivery === "Доставка СДЭК" ? "Город и пункт выдачи СДЭК" : "Улица, дом, квартира"}
+                value={deliveryAddress}
+              />
+            </label>
+          ) : null}
           <label>
             Комментарий
             <textarea

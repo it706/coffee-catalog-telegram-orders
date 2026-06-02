@@ -10,6 +10,7 @@ type OrderPayload = {
   customerName?: string;
   phone?: string;
   delivery?: string;
+  deliveryAddress?: string;
   comment?: string;
   items?: OrderItem[];
   total?: number;
@@ -28,13 +29,19 @@ export async function POST(request: Request) {
   const customerName = payload.customerName?.trim() ?? "";
   const phone = payload.phone?.trim() ?? "";
   const delivery = payload.delivery?.trim() ?? "";
+  const deliveryAddress = payload.deliveryAddress?.trim() ?? "";
   const comment = payload.comment?.trim() ?? "";
   const items = payload.items ?? [];
   const total = payload.total ?? 0;
   const phoneDigits = phone.replace(/\D/g, "");
-  const deliveryDetails = delivery === "Самовывоз" ? "Самовывоз, Москва, Лермонтова 51" : delivery;
+  const deliveryDetails =
+    delivery === "Самовывоз" ? "Самовывоз, Москва, Лермонтова 51" : `${delivery}, ${deliveryAddress}`;
 
   if (!customerName || phoneDigits.length !== 11 || !delivery || items.length === 0 || total <= 0) {
+    return NextResponse.json({ message: "Invalid order data" }, { status: 400 });
+  }
+
+  if (delivery !== "Самовывоз" && !deliveryAddress) {
     return NextResponse.json({ message: "Invalid order data" }, { status: 400 });
   }
 
@@ -58,9 +65,10 @@ export async function POST(request: Request) {
     timeStyle: "short",
     timeZone: "Europe/Moscow",
   }).format(new Date());
+  const orderNumber = `VC-${Date.now().toString().slice(-6)}`;
 
   const text = [
-    "<b>Новый заказ с сайта Valery's Coffee</b>",
+    `<b>Новый заказ ${orderNumber} с сайта Valery's Coffee</b>`,
     "",
     `<b>Клиент:</b> ${escapeHtml(customerName)}`,
     `<b>Телефон:</b> ${escapeHtml(phone)}`,
@@ -92,5 +100,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Telegram request failed" }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, orderNumber });
 }

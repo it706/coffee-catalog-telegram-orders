@@ -261,6 +261,41 @@ h3 {
   color: rgba(251, 252, 247, 0.78);
 }
 
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 22px clamp(18px, 5vw, 64px) 0;
+}
+
+.benefits article {
+  min-height: 170px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px;
+  background: var(--surface);
+}
+
+.benefits span {
+  display: block;
+  margin-bottom: 26px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.benefits strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.benefits p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .catalog {
   padding: 70px clamp(18px, 5vw, 64px);
 }
@@ -407,6 +442,24 @@ h3 {
 .productCard p {
   color: var(--muted);
   line-height: 1.58;
+}
+
+.productMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.productMeta li {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 740;
 }
 
 .productActions {
@@ -610,6 +663,10 @@ textarea:focus {
     justify-content: flex-start;
   }
 
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+
   .productGrid {
     grid-template-columns: repeat(2, minmax(220px, 1fr));
   }
@@ -660,6 +717,7 @@ textarea:focus {
   }
 
   .catalog,
+  .benefits,
   .order {
     padding-left: 14px;
     padding-right: 14px;
