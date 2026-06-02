@@ -48,6 +48,30 @@ function createOrderNumber() {
   return `VC-${date}-${time}`;
 }
 
+async function sendOrderToCrm(payload: {
+  client: string;
+  phone: string;
+  service: string;
+  budget: number;
+  comment: string;
+}) {
+  const crmUrl = process.env.CRM_WEBHOOK_URL;
+
+  if (!crmUrl) return;
+
+  await fetch(crmUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(process.env.CRM_WEBHOOK_SECRET ? { "x-crm-secret": process.env.CRM_WEBHOOK_SECRET } : {}),
+    },
+    body: JSON.stringify({
+      ...payload,
+      project: "Valery's Coffee",
+    }),
+  }).catch(() => null);
+}
+
 export async function POST(request: Request) {
   const payload = (await request.json()) as OrderPayload;
   const customerName = payload.customerName?.trim() ?? "";
@@ -123,6 +147,16 @@ export async function POST(request: Request) {
   if (!telegramResponse.ok) {
     return NextResponse.json({ message: "Telegram request failed" }, { status: 502 });
   }
+
+  await sendOrderToCrm({
+    client: customerName,
+    phone,
+    service: `Заказ ${orderNumber}`,
+    budget: total,
+    comment: [`Получение: ${deliveryDetails}`, comment ? `Комментарий: ${comment}` : "", `Состав: ${items.map((item) => `${item.name} x ${item.quantity}`).join(", ")}`]
+      .filter(Boolean)
+      .join(". "),
+  });
 
   return NextResponse.json({ ok: true, orderNumber });
 }
